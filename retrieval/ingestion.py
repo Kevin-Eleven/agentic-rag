@@ -1,31 +1,37 @@
-"""Ingest script for processing PDF documents and storing them in ChromaDB"""
-
-# Purpose of file:
-# Extract text from pdf, clean it, chunk it, embed it and store in chroma db
-
+"""Ingest a PDF: extract text, chunk it, embed it, and store it in ChromaDB."""
 
 import pymupdf
 import chromadb
 
-doc = pymupdf.open("data/Placement Guidelines- 2026-27.pdf")
-
-# create text chunks
-chunks = []
-for page in doc:
-    text = page.get_text()
-    chunks.append(text)
+from config.settings import CHROMA_PATH
+from retrieval.chunker import chunk_text
+from retrieval.embeddings import embed_texts
 
 
-# Refine the chunks
-cleaned_chunks = [chunk.replace("\n", " ").strip() for chunk in chunks]
+def ingest_pdf(pdf_path, collection_name="pdf_chunks"):
+    doc = pymupdf.open(pdf_path)
+
+    page_texts = [page.get_text().replace("\n", " ").strip() for page in doc]
+    full_text = " ".join(page_texts)
+
+    chunks = chunk_text(full_text)
+
+    client = chromadb.PersistentClient(path=CHROMA_PATH)
+    try:
+        client.delete_collection(collection_name)
+    except Exception:
+        pass
+    collection = client.create_collection(collection_name)
+
+    collection.add(
+        documents=chunks,
+        embeddings=embed_texts(chunks),
+        ids=[str(i) for i in range(len(chunks))],
+    )
+
+    return len(chunks)
 
 
-# Create a ChromaDB client
-client = chromadb.PersistentClient(path="./chroma_db")
-
-# Create a collection in ChromaDB
-collection = client.create_collection(name="pdf_chunks")
-
-collection.add(
-    documents=cleaned_chunks, ids=[str(i) for i in range(len(cleaned_chunks))]
-)
+if __name__ == "__main__":
+    count = ingest_pdf("data/Placement Guidelines- 2026-27.pdf")
+    print(f"Ingested {count} chunks.")
