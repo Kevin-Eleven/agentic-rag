@@ -1,4 +1,4 @@
-from workflow import run_workflow
+from workflow.rag_workflow import run_workflow
 
 while True:
 

@@ -1,6 +1,8 @@
-from agents import evaluate_retrieval, rewrite_query, route_query, retreival_evaluation
+from agents import evaluate_retrieval, rewrite_query, route_query, generate_answer
 from llm import generate
-from retriever import retrieve
+from retrieval.vector_store import ChromaStore
+
+store = ChromaStore()
 
 
 def run_workflow(query):
@@ -10,7 +12,7 @@ def run_workflow(query):
 
     rewritten = rewrite_query(query)
 
-    context = retrieve(rewritten)
+    context = store.retrieve(rewritten)
 
     is_relevant = evaluate_retrieval(rewritten, context)
 
@@ -18,13 +20,11 @@ def run_workflow(query):
     while not is_relevant and retries < 3:
         print("The retrieved context is not relevant. Retrying retrieval...")
         rewritten = rewrite_query(query)
-        context = retrieve(rewritten)
+        context = store.retrieve(rewritten)
         is_relevant = evaluate_retrieval(rewritten, context)
         retries += 1
 
     if not is_relevant:
         return "The retrieved context is not relevant after multiple attempts."
 
-    prompt = f"Answer the following question based on the provided context:\n\nContext: {context}\n\nQuestion: {rewritten}\n\nAnswer:"
-
-    return generate(prompt)
+    return generate_answer(rewritten, context)

@@ -27,3 +27,15 @@ Are the context chunks sufficient to answer the query?
 
 Reply with only YES or NO.
 """
+
+ANSWER_GENERATION_PROMPT = """
+Answer the following question based on the provided context.
+
+Context:
+{context}
+
+Question:
+{query}
+
+Answer:
+"""
