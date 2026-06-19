@@ -1,5 +1,0 @@
-chromadb
-pymupdf
-requests
-python-dotenv
-sentence-transformers
