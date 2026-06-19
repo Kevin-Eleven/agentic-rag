@@ -46,17 +46,19 @@ def test_self_corrects_after_one_bad_retrieval(
 
 
 @patch("workflow.rag_workflow.store")
+@patch("workflow.rag_workflow.generate", return_value="answered without context")
 @patch("workflow.rag_workflow.generate_answer")
 @patch("workflow.rag_workflow.evaluate_retrieval", return_value=0)
 @patch("workflow.rag_workflow.rewrite_query", return_value="rewritten")
 @patch("workflow.rag_workflow.route_query", return_value=True)
-def test_gives_up_after_three_retries(
-    mock_route_query, mock_rewrite_query, mock_evaluate_retrieval, mock_generate_answer, mock_store
+def test_falls_back_to_no_context_generation_after_three_retries(
+    mock_route_query, mock_rewrite_query, mock_evaluate_retrieval, mock_generate_answer, mock_generate, mock_store
 ):
     mock_store.retrieve.return_value = ["irrelevant chunk"]
 
     answer = rag_workflow.run_workflow("Can I apply off-campus while registered with CCDC?")
 
-    assert answer == "The retrieved context is not relevant after multiple attempts."
+    assert answer == "answered without context"
     assert mock_store.retrieve.call_count == 4
     mock_generate_answer.assert_not_called()
+    mock_generate.assert_called_once_with("Can I apply off-campus while registered with CCDC?")

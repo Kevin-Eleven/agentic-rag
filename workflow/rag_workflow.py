@@ -7,10 +7,22 @@ logger = get_logger(__name__)
 store = ChromaStore()
 
 
-def run_workflow(query):
+def run_workflow(query, return_trace=False):
 
-    if not route_query(query):
-        return generate(query)
+    needs_retrieval = route_query(query)
+
+    if not needs_retrieval:
+        answer = generate(query)
+        if return_trace:
+            return {
+                "query": query,
+                "needs_retrieval": False,
+                "rewritten_query": None,
+                "retrieved_chunks": [],
+                "retry_count": 0,
+                "answer": answer,
+            }
+        return answer
 
     rewritten = rewrite_query(query)
 
@@ -28,6 +40,26 @@ def run_workflow(query):
 
     if not is_relevant:
         log_stage(logger, "retrieval_failed", query=query, retries=retries)
-        return "The retrieved context is not relevant after multiple attempts."
+        answer = generate(query)
+        if return_trace:
+            return {
+                "query": query,
+                "needs_retrieval": True,
+                "rewritten_query": rewritten,
+                "retrieved_chunks": context,
+                "retry_count": retries,
+                "answer": answer,
+            }
+        return answer
 
-    return generate_answer(rewritten, context)
+    answer = generate_answer(rewritten, context)
+    if return_trace:
+        return {
+            "query": query,
+            "needs_retrieval": True,
+            "rewritten_query": rewritten,
+            "retrieved_chunks": context,
+            "retry_count": retries,
+            "answer": answer,
+        }
+    return answer

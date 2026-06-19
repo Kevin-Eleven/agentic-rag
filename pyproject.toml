@@ -19,9 +19,12 @@ dependencies = [
 dev = [
     "pytest",
 ]
+ui = [
+    "streamlit",
+]
 
 [tool.setuptools.packages.find]
-include = ["agents*", "llm*", "retrieval*", "config*", "workflow*", "utils*"]
+include = ["agents*", "llm*", "retrieval*", "config*", "workflow*", "utils*", "eval*", "ui*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
