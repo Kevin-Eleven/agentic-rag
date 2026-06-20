@@ -26,7 +26,7 @@ def run_workflow(query, return_trace=False):
 
     rewritten = rewrite_query(query)
 
-    context = store.retrieve(rewritten)
+    context = store.retrieve_hybrid(rewritten)
 
     is_relevant = evaluate_retrieval(rewritten, context)
 
@@ -35,7 +35,7 @@ def run_workflow(query, return_trace=False):
         retries += 1
         log_stage(logger, "retry_retrieval", attempt=retries, query=query)
         rewritten = rewrite_query(query)
-        context = store.retrieve(rewritten)
+        context = store.retrieve_hybrid(rewritten)
         is_relevant = evaluate_retrieval(rewritten, context)
 
     if not is_relevant:

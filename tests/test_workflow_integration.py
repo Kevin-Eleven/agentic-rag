@@ -19,12 +19,12 @@ def test_general_knowledge_query_skips_retrieval(mock_generate, mock_route_query
 def test_relevant_retrieval_generates_answer_without_retry(
     mock_route_query, mock_rewrite_query, mock_evaluate_retrieval, mock_generate_answer, mock_store
 ):
-    mock_store.retrieve.return_value = ["relevant chunk"]
+    mock_store.retrieve_hybrid.return_value = ["relevant chunk"]
 
     answer = rag_workflow.run_workflow("Can I apply off-campus while registered with CCDC?")
 
     assert answer == "Final answer"
-    mock_store.retrieve.assert_called_once_with("rewritten query")
+    mock_store.retrieve_hybrid.assert_called_once_with("rewritten query")
     mock_generate_answer.assert_called_once_with("rewritten query", ["relevant chunk"])
 
 
@@ -36,12 +36,12 @@ def test_relevant_retrieval_generates_answer_without_retry(
 def test_self_corrects_after_one_bad_retrieval(
     mock_route_query, mock_rewrite_query, mock_evaluate_retrieval, mock_generate_answer, mock_store
 ):
-    mock_store.retrieve.side_effect = [["irrelevant chunk"], ["relevant chunk"]]
+    mock_store.retrieve_hybrid.side_effect = [["irrelevant chunk"], ["relevant chunk"]]
 
     answer = rag_workflow.run_workflow("Can I apply off-campus while registered with CCDC?")
 
     assert answer == "Final answer"
-    assert mock_store.retrieve.call_count == 2
+    assert mock_store.retrieve_hybrid.call_count == 2
     mock_generate_answer.assert_called_once_with("rewrite 2", ["relevant chunk"])
 
 
@@ -54,11 +54,11 @@ def test_self_corrects_after_one_bad_retrieval(
 def test_falls_back_to_no_context_generation_after_three_retries(
     mock_route_query, mock_rewrite_query, mock_evaluate_retrieval, mock_generate_answer, mock_generate, mock_store
 ):
-    mock_store.retrieve.return_value = ["irrelevant chunk"]
+    mock_store.retrieve_hybrid.return_value = ["irrelevant chunk"]
 
     answer = rag_workflow.run_workflow("Can I apply off-campus while registered with CCDC?")
 
     assert answer == "answered without context"
-    assert mock_store.retrieve.call_count == 4
+    assert mock_store.retrieve_hybrid.call_count == 4
     mock_generate_answer.assert_not_called()
     mock_generate.assert_called_once_with("Can I apply off-campus while registered with CCDC?")

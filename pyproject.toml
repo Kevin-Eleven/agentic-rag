@@ -13,6 +13,7 @@ dependencies = [
     "requests",
     "python-dotenv",
     "sentence-transformers",
+    "rank_bm25",
 ]
 
 [project.optional-dependencies]
