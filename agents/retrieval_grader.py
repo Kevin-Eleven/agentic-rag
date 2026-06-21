@@ -1,11 +1,12 @@
 from llm.prompts import RETRIEVAL_EVALUATION_PROMPT
 
 from llm.groq_client import generate
-from utils.logger import get_logger, log_stage
+from utils.logger import get_logger, log_stage, time_stage
 
 logger = get_logger(__name__)
 
 
+@time_stage("grade_retrieval")
 def evaluate_retrieval(query, relevant_chunks):
     retrieval_prompt = RETRIEVAL_EVALUATION_PROMPT.format(
         query=query, context=relevant_chunks

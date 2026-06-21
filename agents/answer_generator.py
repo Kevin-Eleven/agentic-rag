@@ -1,11 +1,12 @@
 from llm.prompts import ANSWER_GENERATION_PROMPT
 
 from llm.groq_client import generate
-from utils.logger import get_logger, log_stage
+from utils.logger import get_logger, log_stage, time_stage
 
 logger = get_logger(__name__)
 
 
+@time_stage("generate_answer")
 def generate_answer(query, context):
     answer_prompt = ANSWER_GENERATION_PROMPT.format(query=query, context=context)
     answer = generate(answer_prompt)

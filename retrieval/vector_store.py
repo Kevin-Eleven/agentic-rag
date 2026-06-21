@@ -5,6 +5,7 @@ from rank_bm25 import BM25Okapi
 
 from config.settings import CHROMA_PATH, TOP_K
 from retrieval.embeddings import embed_query
+from utils.logger import time_stage
 
 
 def _tokenize(text):
@@ -38,6 +39,7 @@ class ChromaStore:
         )
         return list(zip(results["documents"][0], results["distances"][0]))
 
+    @time_stage("retrieve")
     def retrieve_hybrid(self, query, n_results=TOP_K, candidate_pool=20, rrf_k=60):
         """Hybrid retrieval: fuses BM25 keyword ranking with embedding-similarity ranking via
         reciprocal rank fusion, so a chunk only one signal favors can still surface."""
