@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 from agents import evaluate_retrieval, rewrite_query, route_query, generate_answer
 from llm import generate
 from retrieval.vector_store import ChromaStore
@@ -8,6 +10,21 @@ store = ChromaStore()
 
 
 def run_workflow(query, return_trace=False):
+    """Cached entry point: identical (query, return_trace) pairs skip the whole
+    router/retrieve/grade/generate pipeline and return the prior result."""
+    before_hits = _run_workflow_cached.cache_info().hits
+    result = _run_workflow_cached(query, return_trace)
+    cache_hit = _run_workflow_cached.cache_info().hits > before_hits
+    log_stage(logger, "workflow_cache", query=query, cache_hit=cache_hit)
+    return result
+
+
+def clear_workflow_cache():
+    _run_workflow_cached.cache_clear()
+
+
+@lru_cache(maxsize=128)
+def _run_workflow_cached(query, return_trace=False):
 
     needs_retrieval = route_query(query)
 
