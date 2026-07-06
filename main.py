@@ -1,12 +1,39 @@
+from llm.groq_client import LLMError
 from workflow.rag_workflow import run_workflow
 
-while True:
 
-    query = input("> ")
+def main():
+    print("Agentic RAG — ask a question ('exit' to quit)")
+    while True:
+        try:
+            query = input("> ").strip()
+        except (KeyboardInterrupt, EOFError):
+            print()
+            break
 
-    if query.lower() == "exit":
-        break
+        if not query:
+            continue
+        if query.lower() in {"exit", "quit"}:
+            break
 
-    answer = run_workflow(query)
+        try:
+            trace = run_workflow(query, return_trace=True)
+        except LLMError as error:
+            print(f"LLM call failed: {error}")
+            continue
 
-    print(answer)
+        print(trace["answer"])
+
+        sources = {
+            (chunk.get("source", "unknown"), chunk.get("page", "?"))
+            for chunk in trace["retrieved_chunks"]
+            if isinstance(chunk, dict)
+        }
+        if sources:
+            print("\nSources:")
+            for source, page in sorted(sources, key=str):
+                print(f"  - {source}, page {page}")
+
+
+if __name__ == "__main__":
+    main()
