@@ -1,0 +1,52 @@
+[
+  {
+    "question": "Can I apply to off-campus opportunities while registered with the placement cell?",
+    "golden_answer": "Students registered with the placement cell may apply off-campus only under the conditions the guidelines specify, such as informing the placement cell and following the no-objection process.",
+    "expected_keywords": ["off-campus", "off campus"]
+  },
+  {
+    "question": "What happens if a student rejects an offer after accepting it?",
+    "golden_answer": "Rejecting an accepted offer is treated as a policy violation and can lead to debarment from further placement activities.",
+    "expected_keywords": ["reject", "debar", "accepted offer"]
+  },
+  {
+    "question": "How many offers can a student hold at one time?",
+    "golden_answer": "The guidelines cap the number of simultaneous offers a student can hold; once the cap is reached the student is out of the placement process.",
+    "expected_keywords": ["one offer", "single offer", "offer"]
+  },
+  {
+    "question": "What is the eligibility criterion for sitting in placement drives?",
+    "golden_answer": "Students must meet the academic and registration criteria defined in the guidelines to be eligible for placement drives.",
+    "expected_keywords": ["eligib"]
+  },
+  {
+    "question": "Do internships convert into full-time offers under these guidelines?",
+    "golden_answer": "The guidelines describe how pre-placement offers arising from internships are handled and how they affect further participation.",
+    "expected_keywords": ["internship", "PPO", "pre-placement"]
+  },
+  {
+    "question": "What is the attendance requirement for pre-placement talks?",
+    "golden_answer": "Attendance at pre-placement talks of companies a student registered for is mandatory as per the guidelines.",
+    "expected_keywords": ["pre-placement talk", "attendance"]
+  },
+  {
+    "question": "What are the consequences of misconduct during the placement process?",
+    "golden_answer": "Misconduct such as providing false information or misbehaving during a drive leads to disciplinary action, including debarment from placements.",
+    "expected_keywords": ["misconduct", "disciplinary", "debar", "false information"]
+  },
+  {
+    "question": "How does the dream offer or higher-package clause work?",
+    "golden_answer": "Students who already hold an offer may sit for companies offering a significantly higher package, subject to the dream-offer conditions in the guidelines.",
+    "expected_keywords": ["dream", "higher package", "CTC"]
+  },
+  {
+    "question": "What is the process for obtaining a no-objection certificate?",
+    "golden_answer": "Students must request a no-objection certificate from the placement cell following the documented process before pursuing outside opportunities.",
+    "expected_keywords": ["no-objection", "NOC"]
+  },
+  {
+    "question": "Who should students contact for placement-related grievances?",
+    "golden_answer": "Placement-related grievances are handled by the placement cell / committee through the escalation path the guidelines define.",
+    "expected_keywords": ["grievance", "contact", "committee"]
+  }
+]
